@@ -1,0 +1,19 @@
+body{
+ background-color: gray;
+}
+
+#typing-area{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* uses flexbox to avoid issue of spacing between inline-divs */
+/* Source: https://css-tricks.com/fighting-the-space-between-inline-block-elements/ */
+.typing-word{
+    margin: 0 3px 0 3px;
+    display: flex;
+}
+
+.typing-letter{
+    font-size: 70px;
+}
