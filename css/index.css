@@ -33,20 +33,13 @@ body{
     border-radius: 7px;
 }
 
-/* .typing-letter::after{
-    content: "";
-  width: 5px;
-  height: 20px;
-  background: #ec7fff;
-  display: inline-block;
-} */
-
 /* cursor in  */
 .typing-letter > .cursor{
     background-color: black;
     height: 3px;
     position: relative;
-    top: 4px;
+    width: 90%;
+    margin: auto;
     
     animation-name: cursor-blink;
     animation-duration: 1s;
