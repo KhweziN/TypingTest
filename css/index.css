@@ -3,8 +3,21 @@ body{
 }
 
 #typing-area{
+    /* Structure */
     display: flex;
     flex-wrap: wrap;
+    padding: 3px 0px 3px 0px;
+    border-style: solid;
+    border-radius: 10px;
+    width: 70%;
+    row-gap: 10px;
+
+    /* div centering */
+    position: relative;
+    margin: auto;
+
+    /* Text styles */
+    font-family: "Lucida Console";
 }
 
 /* uses flexbox to avoid issue of spacing between inline-divs */
@@ -12,8 +25,50 @@ body{
 .typing-word{
     margin: 0 3px 0 3px;
     display: flex;
+    column-gap: 3px;
 }
 
 .typing-letter{
-    font-size: 70px;
+    font-size: 40px;
+    border-radius: 7px;
+}
+
+/* .typing-letter::after{
+    content: "";
+  width: 5px;
+  height: 20px;
+  background: #ec7fff;
+  display: inline-block;
+} */
+
+/* cursor in  */
+.typing-letter > .cursor{
+    background-color: black;
+    height: 3px;
+    position: relative;
+    top: 4px;
+    
+    animation-name: cursor-blink;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+
+/* current letter */
+.current-typing-letter{}
+
+/* correct letter typed */
+div.incorrect-typed-letter{
+    background-color: rgba(242, 58, 58, 0.7);
+}
+
+/* incorrect letter typed */
+div.correct-typed-letter{
+    background-color: rgba(26, 189, 29, 0.7);
+}
+
+/* =================Animations=================== */
+@keyframes cursor-blink {
+    0% {background-color: black;}
+    50% {background-color: rgba(0, 0, 0, 0);}
+    100% {background-color: black;}
 }
