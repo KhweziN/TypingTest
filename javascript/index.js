@@ -18,7 +18,7 @@ TypingString.prototype.stringToElement = function(s){
     let wordArray = s.split(" ");
 
     for(let i=0; i<wordArray.length; i++){
-        let typingWord = document.createElement("div");
+        let typingWordElement = document.createElement("div");
 
         for(let j=0; j<wordArray[i].length; j++){
         //create typing-letter element
@@ -29,17 +29,17 @@ TypingString.prototype.stringToElement = function(s){
         typingLetter.classList.add("typing-letter");
 
         //add letter to word
-        typingWord.appendChild(typingLetter);
+        typingWordElement.appendChild(typingLetter);
       }
 
         //append space to word
-        typingWord.innerHTML += "<div class='typing-letter'>&nbsp;</div>";
+        typingWordElement.innerHTML += "<div class='typing-letter'>&nbsp;</div>";
 
         //add class to word
-        typingWord.classList.add("typing-word");
+        typingWordElement.classList.add("typing-word");
 
         //add typing word to tying area
-        this.typingArea.appendChild(typingWord);
+        this.typingArea.appendChild(typingWordElement);
     }
 }
 
@@ -91,6 +91,4 @@ for(let i=0; i<10; i++){
     t.incrementIndices();
 }
 
-t.decrementIndices();t.decrementIndices();t.decrementIndices();t.decrementIndices();t.decrementIndices();t.decrementIndices();
-t.decrementIndices();t.decrementIndices();t.decrementIndices();t.decrementIndices();t.decrementIndices();t.decrementIndices();
 
