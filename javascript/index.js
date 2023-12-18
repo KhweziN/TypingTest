@@ -53,7 +53,7 @@ TypingString.prototype.processNextKey = function (keycode){
 TypingString.prototype.incrementIndices = function (){
 
     if(this.wordBuffer.item(this.currentWordIndex) === null){ //no (more) words
-        console.error("No more words available");
+        throw new RangeError("No more words available");
         return false;
     }
 
@@ -68,7 +68,7 @@ TypingString.prototype.incrementIndices = function (){
 
 TypingString.prototype.decrementIndices = function (){
     if(this.currentWordIndex == 0 && this.currentLetterIndex == 0){ //cannot delete any more words
-        console.error("No prior words exist in buffer");
+        throw new RangeError("No prior words exist in buffer");
         return;
     }
 
@@ -80,6 +80,7 @@ TypingString.prototype.decrementIndices = function (){
         this.currentLetterIndex--;
     }
 }
+//=============TypingString class==============
 
 ///////////////////Testing code///////////////////////
 var typingArea = document.getElementById("typing-area");
@@ -89,4 +90,7 @@ for(let i=0; i<10; i++){
         ${t.typingArea.children.item(t.currentWordIndex).children.item(t.currentLetterIndex).innerHTML}`);
     t.incrementIndices();
 }
+
+t.decrementIndices();t.decrementIndices();t.decrementIndices();t.decrementIndices();t.decrementIndices();t.decrementIndices();
+t.decrementIndices();t.decrementIndices();t.decrementIndices();t.decrementIndices();t.decrementIndices();t.decrementIndices();
 
