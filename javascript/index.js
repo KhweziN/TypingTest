@@ -1,5 +1,4 @@
-
-
+var ignoredKeys = ["Shift", "Control", "Alt", "CapsLock", "Fn", "NumLock", "Meta"];
 //=============TypingString class==============
 //Note: 'this' references the object that WILL be created when the constructor is instantiated.
 //https://blog.kevinchisholm.com/javascript/the-javascript-this-keyword-deep-dive-constructor-functions/
@@ -43,29 +42,6 @@ TypingString.prototype.stringToElement = function(s){
     }
 }
 
-TypingString.prototype.processNextKey = function (keycode){
-    //handle inputs that are not letters, numbers or specific symbols (e.g. full stops, commas etc.)
-    //if keycode === backspace -> decrement 
-    //if keycode !== this.wordBuffer.item(this.currentWordIndex).item(currentLetterIndex).innerText -> return false (incorrect input) and currentIndex stays the same
-    //else increment currentIndex
-}
-
-TypingString.prototype.incrementIndices = function (){
-
-    if(this.wordBuffer.item(this.currentWordIndex) === null){ //no (more) words
-        throw new RangeError("No more words available");
-        return false;
-    }
-
-    if( this.currentLetterIndex == this.wordBuffer.item(this.currentWordIndex).children.length-1){ //no more letters in current word
-        this.currentWordIndex++;
-        this.currentLetterIndex = 0;
-    }
-    else{
-        this.currentLetterIndex++;
-    }
-}
-
 TypingString.prototype.decrementIndices = function (){
     if(this.currentWordIndex == 0 && this.currentLetterIndex == 0){ //cannot delete any more words
         throw new RangeError("No prior words exist in buffer");
@@ -80,15 +56,66 @@ TypingString.prototype.decrementIndices = function (){
         this.currentLetterIndex--;
     }
 }
+
+TypingString.prototype.incrementIndices = function (){
+
+    if(this.currentWordIndex == this.wordBuffer.length-1 && 
+        this.currentLetterIndex == this.wordBuffer.item(this.currentWordIndex).children.length-1){ //no more words (or letters) words
+        throw new RangeError("No more words available");
+    }
+
+    if( this.currentLetterIndex == this.wordBuffer.item(this.currentWordIndex).children.length-1){ //no more letters in current word
+        this.currentWordIndex++;
+        this.currentLetterIndex = 0;
+    }
+    else{
+        this.currentLetterIndex++;
+    }
+}
+
+TypingString.prototype.processNextKey = function (key){
+    //handle inputs that are not letters, numbers or specific symbols (e.g. full stops, commas etc.)
+     
+    let currLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
+
+    if(ignoredKeys.includes(key)){ //ignored keys
+        return;
+    }
+
+    if(key === "Backspace"){
+        this.decrementIndices();//handle error
+        let newCurrLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
+        //change css
+        console.log(key);
+        return;
+    }
+
+    //if key !== current letter
+    if(key !== currLetterElement.innerText && key !== " "){
+        console.log(`${key} is not equal to ${currLetterElement.innerText}`);
+        this.incrementIndices();
+        let newCurrLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
+        //change css
+    }
+    else{
+        console.log(key);
+        this.incrementIndices();
+        let newCurrLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
+        //change css
+    }
+}
+
+
 //=============TypingString class==============
 
 ///////////////////Testing code///////////////////////
 var typingArea = document.getElementById("typing-area");
 var t = new TypingString("Hello world", typingArea);
-for(let i=0; i<10; i++){
-    console.log(`Word (${t.currentWordIndex}), Letter (${t.currentLetterIndex}) : 
-        ${t.typingArea.children.item(t.currentWordIndex).children.item(t.currentLetterIndex).innerHTML}`);
-    t.incrementIndices();
-}
+// for(let i=0; i<10; i++){
+//     console.log(`Word (${t.currentWordIndex}), Letter (${t.currentLetterIndex}) : 
+//         ${t.typingArea.children.item(t.currentWordIndex).children.item(t.currentLetterIndex).innerHTML}`);
+//     t.incrementIndices();
+// }
 
+document.addEventListener("keydown", (event) => t.processNextKey(event.key));
 
