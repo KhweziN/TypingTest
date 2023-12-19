@@ -9,7 +9,13 @@ function TypingString(string, typingArea){
     this.currentLetterIndex = 0;
     this.typingArea = typingArea;
     this.wordBuffer = typingArea.children; //HTMLCollection of typingArea children (words)
+
+
+    this.cursorElement = document.createElement("div");
+    this.cursorElement.classList.add("cursor");
+
     this.stringToElement(string);
+    this.wordBuffer.item(0).children.item(0).appendChild(this.cursorElement);
     //add cursor to first element
 }
 
@@ -73,35 +79,42 @@ TypingString.prototype.incrementIndices = function (){
     }
 }
 
-TypingString.prototype.processNextKey = function (key){
-    //handle inputs that are not letters, numbers or specific symbols (e.g. full stops, commas etc.)
-     
+TypingString.prototype.processNextKey = function (key){     
     let currLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
 
-    if(ignoredKeys.includes(key)){ //ignored keys
+    if(ignoredKeys.includes(key)){ //ignore keys
         return;
     }
 
     if(key === "Backspace"){
         this.decrementIndices();//handle error
         let newCurrLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
-        //change css
+        
+        this.cursorElement.remove();
+        newCurrLetterElement.classList.remove("incorrect-typed-letter", "correct-typed-letter");
+        newCurrLetterElement.appendChild(this.cursorElement);
         console.log(key);
         return;
     }
 
-    //if key !== current letter
-    if(key !== currLetterElement.innerText && key !== " "){
+    //if key !== current character (including space - nbsp)
+    if(key !== currLetterElement.innerText && !(key === " " && currLetterElement.innerText == String.fromCharCode(160))){
         console.log(`${key} is not equal to ${currLetterElement.innerText}`);
         this.incrementIndices();
         let newCurrLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
-        //change css
+        
+        this.cursorElement.remove();
+        currLetterElement.classList.add("incorrect-typed-letter");
+        newCurrLetterElement.appendChild(this.cursorElement);
     }
     else{
         console.log(key);
         this.incrementIndices();
         let newCurrLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
-        //change css
+
+        this.cursorElement.remove();
+        currLetterElement.classList.add("correct-typed-letter");
+        newCurrLetterElement.appendChild(this.cursorElement);
     }
 }
 
