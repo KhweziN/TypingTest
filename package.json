@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "jsdom": "^23.0.1",
     "mocha": "^10.2.0"
   }
 }

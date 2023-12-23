@@ -121,6 +121,54 @@ TypingString.prototype.processNextKey = function (key){
 
 //=============TypingString class==============
 
+//=============ContentGenerator class==============
+function ContentGenerator(){
+    
+}
+
+ContentGenerator.prototype.getWords =  
+function (numWords, contains = /[A-Za-z]/g, minWordLength = 1){
+    if(numWords <= 0) throw new RangeError("invalid number of words - must be greater than 0");
+    if(minWordLength <= 0) throw new RangeError("invalid word length - must be greater than 0");
+
+    let wordArray = [];
+    let req = new XMLHttpRequest();
+    let url = "https://random-word-api.herokuapp.com/word?number=" + numWords * 1000;
+    let maxRequests = 10;
+
+    req.onreadystatechange = function (response){
+        if(this.readyState == 4 && this.status == 200){ //success
+            let responseArray = JSON.parse(req.responseText);
+
+            responseArray.every(function(element){
+                if(contains.test(element)){ //add word to list if it contains letters needed 
+                    wordArray.push(element);
+                }
+                return wordArray.length !== numWords; //if true, continue (get more words)
+            });
+        }
+    }
+
+    let counter = 0;
+    while(wordArray.length !== numWords && counter < maxRequests){
+        req.open("GET", url, false);
+        req.send();
+        counter++;
+    }
+
+    console.log(wordArray);
+    return wordArray;
+}
+
+ContentGenerator.prototype.getSentences = function(numSentences, options){
+    throw new Error("Not implemented");
+}
+
+ContentGenerator.prototype.getStory = function(){
+    throw new Error("Not implemented");
+}
+//=============ContentGenerator class==============
+
 ///////////////////Testing code///////////////////////
 var typingArea = document.getElementById("typing-area");
 var t = new TypingString("Hello world", typingArea);
@@ -132,3 +180,10 @@ var t = new TypingString("Hello world", typingArea);
 
 document.addEventListener("keydown", (event) => t.processNextKey(event.key));
 
+var contentGen = new ContentGenerator();
+
+export {TypingString};
+
+document.addEventListener("keypress", function(event){
+    contentGen.getWords(5, /[\w]*ysm[\w]*/g);
+});
