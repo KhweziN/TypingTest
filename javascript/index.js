@@ -108,9 +108,13 @@ TypingString.prototype.processNextKey = function (key){
         newCurrLetterElement.appendChild(this.cursorElement);
     }
     else{
-        console.log(key);
+        let oldWordElement = this.wordBuffer.item(this.currentWordIndex);
+
         this.incrementIndices();
+        
         let newCurrLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
+        //if newCurrentElement's position != (old)currentElement's position
+        // -> delete words including (old)currentElement
 
         this.cursorElement.remove();
         currLetterElement.classList.add("correct-typed-letter");
@@ -126,38 +130,55 @@ function ContentGenerator(){
     
 }
 
+ContentGenerator.prototype.requestWords =
+function(req, url, contains, numRemainingWords){
+    
+    return new Promise(function(resolveFunc){
+        let words = [];
+
+        req.onreadystatechange = function (response){
+            if(this.readyState == 4 && this.status == 200){ //success
+                let responseArray = JSON.parse(req.responseText);
+    
+                responseArray.every(function(element){
+                    if(contains.test(element)){ //add word to list if it contains letters needed 
+                        words.push(element);
+                    }
+                    return words.length !== numRemainingWords; //if true, continue (get more words)
+                });
+                resolveFunc(words);
+            }
+        }
+
+        req.open("GET", url, true);
+        req.send();
+    });
+}
+
 ContentGenerator.prototype.getWords =  
-function (numWords, contains = /[A-Za-z]/g, minWordLength = 1){
+async function (numWords, contains = /[A-Za-z]/g, minWordLength = 1){
     if(numWords <= 0) throw new RangeError("invalid number of words - must be greater than 0");
     if(minWordLength <= 0) throw new RangeError("invalid word length - must be greater than 0");
 
     let wordArray = [];
     let req = new XMLHttpRequest();
-    let url = "https://random-word-api.herokuapp.com/word?number=" + numWords * 1000;
-    let maxRequests = 10;
-
-    req.onreadystatechange = function (response){
-        if(this.readyState == 4 && this.status == 200){ //success
-            let responseArray = JSON.parse(req.responseText);
-
-            responseArray.every(function(element){
-                if(contains.test(element)){ //add word to list if it contains letters needed 
-                    wordArray.push(element);
-                }
-                return wordArray.length !== numWords; //if true, continue (get more words)
-            });
-        }
-    }
+    let url = "https://random-word-api.herokuapp.com/word?number=" + numWords * 100;
 
     let counter = 0;
-    while(wordArray.length !== numWords && counter < maxRequests){
-        req.open("GET", url, false);
-        req.send();
+    let maxRequests = 10;
+
+    const getWordsHelper = async counter => {
+        if (wordArray.length == numWords || counter >= maxRequests) 
+            return; 
+        let words = await this.requestWords(req,url,contains, numWords - wordArray.length);
+        wordArray = wordArray.concat(words);
+        console.log(wordArray);
         counter++;
+        await getWordsHelper(counter);
     }
 
-    console.log(wordArray);
-    return wordArray;
+    let temp = await getWordsHelper(counter);
+    console.log(`Finished word array: ${wordArray}`);    
 }
 
 ContentGenerator.prototype.getSentences = function(numSentences, options){
@@ -165,7 +186,21 @@ ContentGenerator.prototype.getSentences = function(numSentences, options){
 }
 
 ContentGenerator.prototype.getStory = function(){
-    throw new Error("Not implemented");
+    let req = new XMLHttpRequest();
+    let url = "https://shortstories-api.onrender.com/";
+    let story, response;
+
+    return new Promise(function(resolveFunc){ //code executed within promise - executor function
+        req.onreadystatechange = function(){
+            if(req.readyState == 4 && req.status == 200){
+                response = JSON.parse(req.responseText);
+                story = response.story;
+                resolveFunc(story);
+            }
+        }
+        req.open("GET", url, true);
+        req.send();
+    });
 }
 //=============ContentGenerator class==============
 
@@ -184,6 +219,10 @@ var contentGen = new ContentGenerator();
 
 export {TypingString};
 
-document.addEventListener("keypress", function(event){
-    contentGen.getWords(5, /[\w]*ysm[\w]*/g);
-});
+// document.addEventListener("keypress", function(){
+//     contentGen.getStory().then((result) => console.log(result));
+// });
+
+// document.addEventListener("keypress", function(){
+//     contentGen.getWords(5, /x[\w]*i/g);
+// });
