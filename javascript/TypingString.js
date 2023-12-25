@@ -15,8 +15,10 @@ function TypingString(string, typingArea){
     this.cursorElement.classList.add("cursor");
 
     this.stringToElement(string);
-    this.wordBuffer.item(0).children.item(0).appendChild(this.cursorElement);
-    //add cursor to first element
+    this.wordBuffer.item(0).children.item(0).appendChild(this.cursorElement); //add cursor to first element
+
+    this.hideFirstWordIndex = 0;
+    
 }
 
 TypingString.prototype.stringToElement = function(s){
@@ -97,13 +99,12 @@ TypingString.prototype.processNextKey = function (key){
         precedingLetterElement.appendChild(this.cursorElement);
         console.log(key);
 
-        // if(oldWordElement.getBoundingClientRect().top != newWordElement.getBoundingClientRect().top){
-        //     console.log("CHANGE");
-        //     console.log(oldWordIndex);
-        //     for(let i=0; i<=oldWordIndex; i++){
-        //         this.wordBuffer.item(i).style.display = "none";
-        //     }
-        // }
+        if(precedingLetterElement.getBoundingClientRect().top != currLetterElement.getBoundingClientRect().top){
+            console.log("CHANGE");
+            for(let i=0; i<=oldWordIndex; i++){
+                this.wordBuffer.item(i).style.display = "none";
+            }
+        }
         
         return;
     }
