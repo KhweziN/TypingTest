@@ -88,21 +88,22 @@ TypingString.prototype.processNextKey = function (key){
     }
 
     if(key === "Backspace"){
-        this.decrementIndices();//handle error
-        let newCurrLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
+        this.decrementIndices();//HANDLE ERROR
+        let precedingLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
         
+        //preceding letter becomes current letter
         this.cursorElement.remove();
-        newCurrLetterElement.classList.remove("incorrect-typed-letter", "correct-typed-letter");
-        newCurrLetterElement.appendChild(this.cursorElement);
+        precedingLetterElement.classList.remove("incorrect-typed-letter", "correct-typed-letter");
+        precedingLetterElement.appendChild(this.cursorElement);
         console.log(key);
 
-        if(oldWordElement.getBoundingClientRect().top != newWordElement.getBoundingClientRect().top){
-            console.log("CHANGE");
-            console.log(oldWordIndex);
-            for(let i=0; i<=oldWordIndex; i++){
-                this.wordBuffer.item(i).style.display = "none";
-            }
-        }
+        // if(oldWordElement.getBoundingClientRect().top != newWordElement.getBoundingClientRect().top){
+        //     console.log("CHANGE");
+        //     console.log(oldWordIndex);
+        //     for(let i=0; i<=oldWordIndex; i++){
+        //         this.wordBuffer.item(i).style.display = "none";
+        //     }
+        // }
         
         return;
     }
@@ -111,28 +112,32 @@ TypingString.prototype.processNextKey = function (key){
     if(key !== currLetterElement.innerText && !(key === " " && currLetterElement.innerText == String.fromCharCode(160))){
         console.log(`${key} is not equal to ${currLetterElement.innerText}`);
         this.incrementIndices();
-        let newCurrLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
+        let succeedingLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
         
+        //succeeding letter becomes current letter - incorrect letter typed
         this.cursorElement.remove();
         currLetterElement.classList.add("incorrect-typed-letter");
-        newCurrLetterElement.appendChild(this.cursorElement);
+        succeedingLetterElement.appendChild(this.cursorElement);
     }
     else{
         let oldWordIndex = this.currentWordIndex;
         this.incrementIndices();
+
+        //succeeding letter becomes current letter - correct letter typed
+        let newWordElement = this.wordBuffer.item(this.currentWordIndex); // new current element
+        let newLetterElement = newWordElement.children.item(this.currentLetterIndex);
+        let oldLetterElement = currLetterElement;
+
+        this.cursorElement.remove();
+        oldLetterElement.classList.add("correct-typed-letter");
+        newLetterElement.appendChild(this.cursorElement);
         
-        let oldWordElement = this.wordBuffer.item(oldWordIndex);
-        let newWordElement = this.wordBuffer.item(this.currentWordIndex);
-        let newCurrLetterElement = newWordElement.children.item(this.currentLetterIndex);
+        let oldWordElement = this.wordBuffer.item(oldWordIndex); //old current element
 
         //if newCurrentElement's position != (old)currentElement's position
         // -> delete words including (old)currentElement
 
-        this.cursorElement.remove();
-        currLetterElement.classList.add("correct-typed-letter");
-        newCurrLetterElement.appendChild(this.cursorElement);
-
-        if(oldWordElement.getBoundingClientRect().top != newWordElement.getBoundingClientRect().top){
+        if(oldLetterElement.getBoundingClientRect().top != newLetterElement.getBoundingClientRect().top){
             console.log("CHANGE");
             console.log(oldWordIndex);
             for(let i=0; i<=oldWordIndex; i++){
@@ -141,8 +146,6 @@ TypingString.prototype.processNextKey = function (key){
         }
     }
 }
-
-
 //=============TypingString class==============
 
 export {TypingString};
