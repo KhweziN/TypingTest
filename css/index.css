@@ -1,5 +1,7 @@
 :root{
-    
+    --typingFontSize: 40px;
+    --cursorHeight: 3px;
+    --typingAreaRowGap: 10px;
 }
 
 body{
@@ -65,12 +67,9 @@ body{
 ======================== */
 
 .typing-letter{
-    --fontSize: 40px;
-    --cursorHeight: 3px;
-
-    font-size: var(--fontSize);
+    font-size: var(--typingFontSize);
     border-radius: 7px;
-    height: calc(var(--fontSize) + var(--cursorHeight));
+    height: calc(var(--typingFontSize) + var(--cursorHeight));
 }
 
 /* current letter */
@@ -87,7 +86,8 @@ body{
 }
 
 .translate-animate{
-    animation-name: translate-area;
+    --displacement: calc(0px - var(--typingFontSize) - var(--cursorHeight) - var(--typingAreaRowGap));
+    animation-name: translate-area-up;
     animation-duration: 0.5s;
     animation-fill-mode: forwards;
     animation-iteration-count: 1;
@@ -104,5 +104,7 @@ body{
 
 @keyframes translate-area-up{
     from {transform: translateY(0px);}
-    to {transform: translateY(-53px);}
+    to {
+        transform: translateY(var(--displacement));
+    }
 }
