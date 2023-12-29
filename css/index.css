@@ -21,6 +21,9 @@ body{
 
     /* Text styles */
     font-family: "Lucida Console";
+
+    /* positioning */
+    top: 20%;
 }
 
 #outer-typing-area{

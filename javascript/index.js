@@ -1,34 +1,24 @@
-let textAreaElement = document.getElementById("typing-area");
+import { TypingString } from "./TypingString.js";
+import { ContentGenerator } from "./ContentGenerator.js";
 
-document.addEventListener("keypress", event =>{
-    if (event.code === "Space"){
-        console.log("HIT");
-        textAreaElement.classList.add("translate-animate");
+///////////////////Testing code///////////////////////
+var typingArea = document.getElementById("typing-area");
+var t = new TypingString("Hello world", typingArea);
+// for(let i=0; i<10; i++){
+//     console.log(`Word (${t.currentWordIndex}), Letter (${t.currentLetterIndex}) : 
+//         ${t.typingArea.children.item(t.currentWordIndex).children.item(t.currentLetterIndex).innerHTML}`);
+//     t.incrementIndices();
+// }
 
-        // textAreaElement.animate(
-        //     //keyframes
-        //     [
-        //         {transform: "translateY(0px)"},
-        //         {transform: "translateY(-53px)"}
-        //     ],
+document.addEventListener("keydown", (event) => t.processNextKey(event.key));
+console.log(typingArea.children);
 
-        //     //timing options
-        //     {
-        //         duration: 0.5,
-        //         fill: "forwards",
-        //         iterations: 1
-        //     }
-        // );
-        // document.addEventListener("finish", () => {
-        //     textAreaElement.classList.remove("translate-animate");
-        // });
-    }
-});
+var contentGen = new ContentGenerator();
 
-textAreaElement.addEventListener('animationend', () => {
-    textAreaElement.classList.remove("translate-animate");
-    var typingAreaStyle = window.getComputedStyle(textAreaElement, null);
-    var topValue = typingAreaStyle.getPropertyValue("top").replace("px","");
-    textAreaElement.style.top = (Number(topValue) - 53) + "px";
-    console.log((Number(topValue) - 5) + "px");
-});
+// document.addEventListener("keypress", function(){
+//     contentGen.getStory().then((result) => console.log(result));
+// });
+
+// document.addEventListener("keypress", function(){
+//     contentGen.getWords(5, /x[\w]*i/g);
+// });
