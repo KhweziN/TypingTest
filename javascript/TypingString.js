@@ -28,16 +28,16 @@ TypingString.prototype.stringToElement = function(s){
         let typingWordElement = document.createElement("div");
 
         for(let j=0; j<wordArray[i].length; j++){
-        //create typing-letter element
-        let typingLetter = document.createElement("div");
-        typingLetter.innerText = wordArray[i].charAt(j);
+            //create typing-letter element
+            let typingLetter = document.createElement("div");
+            typingLetter.innerText = wordArray[i].charAt(j);
 
-        //add class(es) to letter
-        typingLetter.classList.add("typing-letter");
+            //add class(es) to letter
+            typingLetter.classList.add("typing-letter");
 
-        //add letter to word
-        typingWordElement.appendChild(typingLetter);
-      }
+            //add letter to word
+            typingWordElement.appendChild(typingLetter);
+        }
 
         //append space to word
         typingWordElement.innerHTML += "<div class='typing-letter'>&nbsp;</div>";

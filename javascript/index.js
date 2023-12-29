@@ -11,6 +11,7 @@ var t = new TypingString("Hello world", typingArea);
 // }
 
 document.addEventListener("keydown", (event) => t.processNextKey(event.key));
+console.log(typingArea.children);
 
 var contentGen = new ContentGenerator();
 
