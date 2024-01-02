@@ -1,19 +1,23 @@
-let textAreaElement = document.getElementById("typing-area");
+import { TypingString } from "./TypingString.js";
+import { ContentGenerator } from "./ContentGenerator.js";
 
-document.addEventListener("keypress", event =>{
-    if (event.code === "Space"){
-        console.log("HIT");
-        textAreaElement.classList.add("translate-animate");
-    }
-});
+///////////////////Testing code///////////////////////
+var typingArea = document.getElementById("typing-area");
+var t = new TypingString("Hello world", typingArea);
+// for(let i=0; i<10; i++){
+//     console.log(`Word (${t.currentWordIndex}), Letter (${t.currentLetterIndex}) : 
+//         ${t.typingArea.children.item(t.currentWordIndex).children.item(t.currentLetterIndex).innerHTML}`);
+//     t.incrementIndices();
+// }
 
-textAreaElement.addEventListener('animationend', (animationEvent) => {
-    textAreaElement.classList.remove("translate-animate");
-    let typingAreaStyle = window.getComputedStyle(textAreaElement, null);
+document.addEventListener("keydown", (event) => t.processNextKey(event.key));
 
-    if(animationEvent.animationName === "translate-area-up"){
-        var topValue = typingAreaStyle.getPropertyValue("top").replace("px","");
-        textAreaElement.style.top = (Number(topValue) - 53) + "px";
-    }
+var contentGen = new ContentGenerator();
 
-});
+// document.addEventListener("keypress", function(){
+//     contentGen.getStory().then((result) => console.log(result));
+// });
+
+// document.addEventListener("keypress", function(){
+//     contentGen.getWords(5, /x[\w]*i/g);
+// });
