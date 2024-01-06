@@ -183,6 +183,7 @@ TypingString.prototype.yPositionsDiffer = function(element1, element2){
 }
 
 TypingString.prototype.reset = function(reload){
+    //remove css classes which indicate incorrect/correct letters
     if(!reload){
         Array.from(this.wordBuffer).every(currentWord => {
             return Array.from(currentWord.children).every(currentLetter => {

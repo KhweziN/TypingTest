@@ -5,6 +5,9 @@ export function Tracker(seconds){
 }
 
 Tracker.prototype.startTracking = function(seconds = this.seconds){
+
+    if(seconds < 0) return false;
+
     //Clear all prior data
     this.loggedKeys = [];
     this.seconds = seconds;
@@ -21,7 +24,7 @@ Tracker.prototype.startTracking = function(seconds = this.seconds){
                 this.isTracking = false;
                 clearInterval(interval);
                 resolve(this.evaluate());
-            };
+            }
         }, 1000);
     });
 }
