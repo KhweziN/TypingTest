@@ -1,5 +1,8 @@
 :root{
-    
+    --typingFontSize: 40px;
+    --cursorHeight: 3px;
+    --typingAreaRowGap: 10px;
+    --displacement: calc(0px - var(--typingFontSize) - var(--cursorHeight) - var(--typingAreaRowGap));
 }
 
 body{
@@ -23,7 +26,7 @@ body{
     font-family: "Lucida Console";
 
     /* positioning */
-    top: 20%;
+    top: 0;
 }
 
 #outer-typing-area{
@@ -68,12 +71,9 @@ body{
 ======================== */
 
 .typing-letter{
-    --fontSize: 40px;
-    --cursorHeight: 3px;
-
-    font-size: var(--fontSize);
+    font-size: var(--typingFontSize);
     border-radius: 7px;
-    height: calc(var(--fontSize) + var(--cursorHeight));
+    height: calc(var(--typingFontSize) + var(--cursorHeight));
 }
 
 /* current letter */
@@ -89,8 +89,15 @@ body{
     background-color: rgba(26, 189, 29, 0.7);
 }
 
-.translate-animate{
-    animation-name: translate-area;
+.translate-area-up{
+    animation-name: translate-up;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: 1;
+}
+
+.translate-area-down{
+    animation-name: translate-down;
     animation-duration: 0.5s;
     animation-fill-mode: forwards;
     animation-iteration-count: 1;
@@ -105,7 +112,16 @@ body{
     100% {background-color: black;}
 }
 
-@keyframes translate-area-up{
+@keyframes translate-up{
     from {transform: translateY(0px);}
-    to {transform: translateY(-53px);}
+    to {
+        transform: translateY(var(--displacement));
+    }
+}
+
+@keyframes translate-down{
+    from {transform: translateY(0px);}
+    to {
+        transform: translateY(calc(0px - var(--displacement)));
+    }
 }

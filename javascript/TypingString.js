@@ -3,8 +3,10 @@ var ignoredKeys = ["Shift", "Control", "Alt", "CapsLock", "Fn", "NumLock", "Meta
 //Note: 'this' references the object that WILL be created when the constructor is instantiated.
 //https://blog.kevinchisholm.com/javascript/the-javascript-this-keyword-deep-dive-constructor-functions/
 
+import {Tracker} from "./Tracker.js";
+
 //constructor
-function TypingString(string, typingArea){
+function TypingString(string, typingArea, seconds){
     this.currentWordIndex = 0;
     this.currentLetterIndex = 0;
     this.typingArea = typingArea;
@@ -17,7 +19,25 @@ function TypingString(string, typingArea){
     this.stringToElement(string);
     this.wordBuffer.item(0).children.item(0).appendChild(this.cursorElement); //add cursor to first element
 
-    this.hideFirstWordIndex = 0;
+    this.tracker = new Tracker(seconds);
+    this.recordInput = false;
+
+    //Change position of typingArea to match translated amount
+    this.typingArea.addEventListener('animationend', (animationEvent) => {
+        let typingAreaStyle = window.getComputedStyle(this.typingArea, null);
+    
+        let topValue = typingAreaStyle.getPropertyValue("top").replace("px","");
+
+        if(animationEvent.animationName === "translate-up"){ //Upwards translation
+            this.typingArea.classList.remove("translate-area-up");
+            this.typingArea.style.top = (Number(topValue) - 53) + "px";
+        }
+        else if(animationEvent.animationName === "translate-down"){ //downwards translation
+            this.typingArea.classList.remove("translate-area-down");
+            this.typingArea.style.top = (Number(topValue) + 53) + "px";
+        }
+    
+    });
     
 }
 
@@ -89,6 +109,16 @@ TypingString.prototype.processNextKey = function (key){
         return;
     }
 
+    if(!this.recordInput){
+        this.recordInput = true;
+        (async () => {
+            console.log(await this.tracker.startTracking());
+            this.recordInput = false;
+            this.reset(false);
+        })();
+    }
+
+
     if(key === "Backspace"){
         this.decrementIndices();//HANDLE ERROR
         let precedingLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
@@ -99,53 +129,82 @@ TypingString.prototype.processNextKey = function (key){
         precedingLetterElement.appendChild(this.cursorElement);
         console.log(key);
 
-        if(precedingLetterElement.getBoundingClientRect().top != currLetterElement.getBoundingClientRect().top){
-            console.log("CHANGE");
-            for(let i=0; i<=oldWordIndex; i++){
-                this.wordBuffer.item(i).style.display = "none";
-            }
+        //translate downwards to reveal previously typed words
+        if(this.yPositionsDiffer(precedingLetterElement, currLetterElement)){
+            this.typingArea.classList.add("translate-area-down");
         }
+
+        //update tracker
+        this.tracker.logKey(key);
         
         return;
     }
 
+    let precedingWordIndex = this.currentWordIndex;
+    let precedingLetterIndex = this.currentLetterIndex;
+    this.incrementIndices();
+    let succeedingWordElement = this.wordBuffer.item(this.currentWordIndex); // new current element
+    let precedingLetterElement = this.wordBuffer.item(precedingWordIndex).children.item(precedingLetterIndex);
+    let succeedingLetterElement = succeedingWordElement.children.item(this.currentLetterIndex);
+
     //if key !== current character (including space - nbsp)
     if(key !== currLetterElement.innerText && !(key === " " && currLetterElement.innerText == String.fromCharCode(160))){
         console.log(`${key} is not equal to ${currLetterElement.innerText}`);
-        this.incrementIndices();
-        let succeedingLetterElement = this.wordBuffer.item(this.currentWordIndex).children.item(this.currentLetterIndex);
-        
+                
         //succeeding letter becomes current letter - incorrect letter typed
         this.cursorElement.remove();
         currLetterElement.classList.add("incorrect-typed-letter");
         succeedingLetterElement.appendChild(this.cursorElement);
+
+        //update tracker
+        this.tracker.logKey(key, false);
     }
     else{
-        let oldWordIndex = this.currentWordIndex;
-        this.incrementIndices();
-
         //succeeding letter becomes current letter - correct letter typed
-        let newWordElement = this.wordBuffer.item(this.currentWordIndex); // new current element
-        let newLetterElement = newWordElement.children.item(this.currentLetterIndex);
-        let oldLetterElement = currLetterElement;
-
         this.cursorElement.remove();
-        oldLetterElement.classList.add("correct-typed-letter");
-        newLetterElement.appendChild(this.cursorElement);
-        
-        let oldWordElement = this.wordBuffer.item(oldWordIndex); //old current element
+        currLetterElement.classList.add("correct-typed-letter");
+        succeedingLetterElement.appendChild(this.cursorElement);
 
-        //if newCurrentElement's position != (old)currentElement's position
-        // -> delete words including (old)currentElement
-
-        if(oldLetterElement.getBoundingClientRect().top != newLetterElement.getBoundingClientRect().top){
-            console.log("CHANGE");
-            console.log(oldWordIndex);
-            for(let i=0; i<=oldWordIndex; i++){
-                this.wordBuffer.item(i).style.display = "none";
-            }
-        }
+        //update tracker
+        this.tracker.logKey(key, true);
     }
+
+    //if newCurrentElement's position != (old)currentElement's position
+    // then translate upwards
+    if(this.yPositionsDiffer(precedingLetterElement, succeedingLetterElement)){
+        //if class is already present, wait for it to be removed
+       // while( this.typingArea.classList.contains("translate-area-up")){}
+        this.typingArea.classList.add("translate-area-up");
+    }
+}
+
+TypingString.prototype.yPositionsDiffer = function(element1, element2){
+    return element1.getBoundingClientRect().top != element2.getBoundingClientRect().top;
+}
+
+TypingString.prototype.reset = function(reload){
+    //remove css classes which indicate incorrect/correct letters
+    if(!reload){
+        Array.from(this.wordBuffer).every(currentWord => {
+            return Array.from(currentWord.children).every(currentLetter => {
+                if(currentLetter.classList.contains("incorrect-typed-letter") ||
+                    currentLetter.classList.contains("correct-typed-letter")){
+                        currentLetter.classList.remove("incorrect-typed-letter");
+                        currentLetter.classList.remove("correct-typed-letter");
+                        return true;
+                }
+                return false;
+            });
+        });
+    }
+
+    //reset indices
+    this.currentWordIndex = this.currentLetterIndex = 0;
+    this.typingArea.style.top = 0;
+
+    //reset cursor position
+    this.cursorElement.remove();
+    this.wordBuffer.item(0).children.item(0).appendChild(this.cursorElement);
 }
 //=============TypingString class==============
 
