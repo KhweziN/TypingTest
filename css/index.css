@@ -1,3 +1,10 @@
+:root{
+    --typingFontSize: 40px;
+    --cursorHeight: 3px;
+    --typingAreaRowGap: 10px;
+    --displacement: calc(0px - var(--typingFontSize) - var(--cursorHeight) - var(--typingAreaRowGap));
+}
+
 body{
  background-color: gray;
 }
@@ -10,21 +17,25 @@ body{
     /* Structure */
     display: flex;
     flex-wrap: wrap;
-    padding: 3px 0px 3px 0px;
-    border-style: solid;
-    border-radius: 10px;
-    width: 70%;
     row-gap: 10px;
 
     /* div centering */
     position: relative;
-    margin: auto;
 
     /* Text styles */
     font-family: "Lucida Console";
 
     /* positioning */
-    top: 20%;
+    top: 0;
+}
+
+#outer-typing-area{
+    /* Structure */
+    width: 70%;
+    margin: auto;
+    border-style: solid;
+    border-radius: 10px;
+    clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
 }
 
 /* ====================
@@ -45,7 +56,7 @@ body{
 /* cursor in  */
 .typing-letter > .cursor{
     background-color: black;
-    height: 3px;
+    height: var(--cursorHeight);
     position: relative;
     width: 90%;
     margin: auto;
@@ -60,8 +71,9 @@ body{
 ======================== */
 
 .typing-letter{
-    font-size: 40px;
+    font-size: var(--typingFontSize);
     border-radius: 7px;
+    height: calc(var(--typingFontSize) + var(--cursorHeight));
 }
 
 /* current letter */
@@ -77,6 +89,20 @@ body{
     background-color: rgba(26, 189, 29, 0.7);
 }
 
+.translate-area-up{
+    animation-name: translate-up;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: 1;
+}
+
+.translate-area-down{
+    animation-name: translate-down;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: 1;
+}
+
 /* ====================
    Animations
 ======================== */
@@ -84,4 +110,18 @@ body{
     0% {background-color: black;}
     50% {background-color: rgba(0, 0, 0, 0);}
     100% {background-color: black;}
+}
+
+@keyframes translate-up{
+    from {transform: translateY(0px);}
+    to {
+        transform: translateY(var(--displacement));
+    }
+}
+
+@keyframes translate-down{
+    from {transform: translateY(0px);}
+    to {
+        transform: translateY(calc(0px - var(--displacement)));
+    }
 }
