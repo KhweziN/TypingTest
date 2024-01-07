@@ -4,7 +4,7 @@ import { Tracker } from "./Tracker.js";
 
 ///////////////////Testing code///////////////////////
 var typingArea = document.getElementById("typing-area");
-var t = new TypingString("Hello world", typingArea, 5);
+var t = new TypingString("Hello world + some more dummy text to fill up the buffer", typingArea, 5);
 // for(let i=0; i<10; i++){
 //     console.log(`Word (${t.currentWordIndex}), Letter (${t.currentLetterIndex}) : 
 //         ${t.typingArea.children.item(t.currentWordIndex).children.item(t.currentLetterIndex).innerHTML}`);

@@ -13,11 +13,22 @@ body{
    Typing-area Styles
 ======================== */
 
+#outer-typing-area{
+    /* Structure */
+    width: 70%;
+    margin: auto;
+    border-style: solid;
+    border-radius: 10px;
+    clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
+    max-height: 96px;
+}
+
 #typing-area{
     /* Structure */
     display: flex;
     flex-wrap: wrap;
     row-gap: 10px;
+    /* height: 100%; */
 
     /* div centering */
     position: relative;
@@ -27,15 +38,6 @@ body{
 
     /* positioning */
     top: 0;
-}
-
-#outer-typing-area{
-    /* Structure */
-    width: 70%;
-    margin: auto;
-    border-style: solid;
-    border-radius: 10px;
-    clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
 }
 
 /* ====================
@@ -89,6 +91,62 @@ body{
     background-color: rgba(26, 189, 29, 0.7);
 }
 
+/* ====================
+   Statistics
+======================== */
+
+#statistics{
+    display: grid;
+    position: relative;
+    height: auto;
+    width: 70%;
+    margin: 30px auto 30px auto;
+    background-color: blue;
+    grid-template-columns: auto auto 30%;
+}
+
+.stats-item{
+    border-style: solid;
+    border-width: 3px;
+}
+
+.stats-item:nth-child(1){
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+
+.stats-item:nth-child(4){
+    grid-column-start: 2;
+    grid-column-end: 4;
+}
+
+#wpm-accuracy{
+    text-align: center;
+    font-size: 30px;
+}
+
+#wpm-accuracy > div{
+    font-size: 80px;
+}
+
+.stats-item > ul{
+    display: grid;
+    row-gap: 15px;
+
+    list-style: none;
+    padding-left: 10px;
+    grid-template-columns: auto auto;
+    text-align: center;
+}
+
+.stats-item li > div{
+    font-size: 40px;
+}
+
+/* ====================
+   Animations
+======================== */
+
 .translate-area-up{
     animation-name: translate-up;
     animation-duration: 0.5s;
@@ -104,7 +162,7 @@ body{
 }
 
 /* ====================
-   Animations
+   Keyframes
 ======================== */
 @keyframes cursor-blink {
     0% {background-color: black;}
