@@ -45,6 +45,9 @@ Tracker.prototype.evaluate = function(){
     let _numMinutes = this.seconds/60;
     let _numCorrectKeys = 0, _numTotalKeys = this.loggedKeys.length;
     let _rawWPM, _netWPM, _accuracy;
+    let troublesomeKeys = {};
+
+    console.log(troublesomeKeys['a'] === undefined);
 
     for(let letter of this.loggedKeys){
         if(letter.isCorrect) {

@@ -131,6 +131,11 @@ TypingString.prototype.processNextKey = function (key){
 
         //translate downwards to reveal previously typed words
         if(this.yPositionsDiffer(precedingLetterElement, currLetterElement)){
+            //emit animationend event
+            // let forceStopEvent = new Event("animationend");
+            // forceStopEvent.animationName = "translate-up";
+            // this.typingArea.dispatchEvent(forceStopEvent);
+
             this.typingArea.classList.add("translate-area-down");
         }
 
@@ -197,6 +202,7 @@ TypingString.prototype.reset = function(reload){
             });
         });
     }
+
 
     //reset indices
     this.currentWordIndex = this.currentLetterIndex = 0;

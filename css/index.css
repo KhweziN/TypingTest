@@ -20,7 +20,7 @@ body{
     border-style: solid;
     border-radius: 10px;
     clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
-    max-height: 96px;
+    max-height: 149px;
 }
 
 #typing-area{
